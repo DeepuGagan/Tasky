@@ -15,7 +15,43 @@
     <link rel="stylesheet" href="style.css">
     <title>Tasky</title>
 </head>
-<body>
+
+<body onload=loadInitialCardData()>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add your task here</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div> 
+        <div class="modal-body">
+            <div class="mb-3">    
+                <label for="imageurl" class="form-label">Image URL</label>
+                <input type="url" class="form-control" id="imageurl" aria-describedby="Image Url" placeholder="https://example.com/hello.jpg">
+            </div>
+            <div class="mb-3">    
+                <label for="tasktitle" class="form-label">Task title</label>
+                <input type="text" class="form-control" id="tasktitle" aria-describedby="task title" placeholder="eg: Gym">
+            </div>
+            <div class="mb-3">    
+                <label for="tasktype" class="form-label">Task type</label>
+                <input type="text" class="form-control" id="tasktype" aria-describedby="task type" placeholder="eg: Exercise, Workouts">
+            </div>
+            <div class="mb-3">    
+                <label for="taskdescription" class="form-label">Task type</label>
+                <textarea class="form-control" id="taskdescription" aria-describedby="task type" rows="6" placeholder="Describe your task in detail"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="saveChanges()" data-bs-dismiss="modal" >Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+      <!-- navbar -->
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <div class="container-fluid">
           <a class="navbar-brand fw-bolder text-primary" href="#">Tasky</a>
@@ -28,7 +64,7 @@
                 <a class="nav-link active fw-bold" aria-current="page" href="#">Home</a>
               </li>
             </ul>
-            <button type="button" class="btn btn-primary"><i class="fas fa-plus-square"></i> Add new</button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fas fa-plus-square"></i> Add new</button>
           </div>
         </div>
       </nav>
@@ -42,26 +78,8 @@
             </div>
         </div>
         <section>
-            <div class="row ">
-                <div class="col-md-6 col-lg-4">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-end gap-3">
-                            <button type="button" class="btn btn-outline-success"><i class="fas fa-pen"></i></button>
-                            <button type="button" class="btn btn-outline-danger"><i class="fas fa-trash"></i></button>
-                        </div>
-                        <img src="data:image/jpeg;base64,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" 
-                        class="card-img-top" alt="image">
-
-                        <div class="card-body">
-                          <h5 class="card-title">Special title treatment</h5>
-                          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                          <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                        <div class="card-footer text-muted ">
-                            <button type="button" class="btn btn-outline-primary float-end">Open task</button>
-                        </div>
-                      </div>
-                </div>
+            <div class="row task__container">
+                
             </div>
         </section>
     </div>
@@ -69,5 +87,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
+    <script src="script.js"></script>
 </body>
 </html>
